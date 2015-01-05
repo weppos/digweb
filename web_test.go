@@ -60,14 +60,14 @@ func TestRootHandlerHaltsOtherRequest(t *testing.T) {
 	}
 }
 
-func TestSlackHandlerHaltsGetRequest(t *testing.T) {
-	request, _ := http.NewRequest("GET", "/slack", nil)
+func TestSlackHandlerRoutesGetRequest(t *testing.T) {
+	request, _ := http.NewRequest("GET", "/slack?text=-v", nil)
 	response := httptest.NewRecorder()
 
 	SlackHandler(response, request)
 
-	if expected := http.StatusNotFound; response.Code != expected {
-		t.Fatalf("GET /slack expected HTTP %v, got %v", expected, response.Code)
+	if expected := http.StatusOK; response.Code != expected {
+		t.Fatalf("POST /slack expected HTTP %v, got %v", http.StatusOK, response.Code)
 	}
 }
 

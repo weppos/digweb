@@ -48,6 +48,8 @@ func RootHandler(res http.ResponseWriter, req *http.Request) {
 // SlackHandler handles HTTP requests to /slack.
 func SlackHandler(res http.ResponseWriter, req *http.Request) {
 	switch req.Method {
+	case "GET":
+		actionSlack(res, req)
 	case "POST":
 		actionSlack(res, req)
 	default:
