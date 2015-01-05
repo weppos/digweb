@@ -14,6 +14,7 @@ var (
 
 func main() {
 	http.HandleFunc("/", RootHandler)
+	http.HandleFunc("/slack", SlackHandler)
 
 	fmt.Println(fmt.Sprintf("Listening on %s...", serverPort))
 	err := http.ListenAndServe(":"+serverPort, nil)
@@ -44,7 +45,17 @@ func RootHandler(res http.ResponseWriter, req *http.Request) {
 	}
 }
 
-// CatchallHandler handles all unhandled routes.
+// SlackHandler handles HTTP requests to /slack.
+func SlackHandler(res http.ResponseWriter, req *http.Request) {
+	switch req.Method {
+	case "POST":
+		actionSlack(res, req)
+	default:
+		http.NotFound(res, req)
+	}
+}
+
+// CatchallHandler handles all unhandled HTTP requests.
 func CatchallHandler(res http.ResponseWriter, req *http.Request) {
 	http.NotFound(res, req)
 }
@@ -54,9 +65,17 @@ func actionRoot(res http.ResponseWriter, req *http.Request) {
 	fmt.Fprintln(res, "Alive!")
 }
 
-// actionDig executes the dig query and responds with the result.
+// actionDig executes a dig query extracting the args from the request body
+// and responds with the result.
 func actionDig(res http.ResponseWriter, req *http.Request) {
 	args, _ := ioutil.ReadAll(req.Body)
+	writeDig(res, string(args))
+}
+
+// actionSlack executes a dig query extracting the args from a Slack payload
+// and responds with the result.
+func actionSlack(res http.ResponseWriter, req *http.Request) {
+	args := req.FormValue("text")
 	writeDig(res, string(args))
 }
 
