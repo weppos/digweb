@@ -6,6 +6,7 @@ import (
 	"os"
 	"os/exec"
 	"io/ioutil"
+	"strings"
 )
 
 var (
@@ -82,8 +83,9 @@ func actionSlack(res http.ResponseWriter, req *http.Request) {
 }
 
 // Dig [@global-server] [domain] [q-type] [q-class] {q-opt}
-func Dig(args string) ([]byte, error) {
-	return exec.Command("dig", args).CombinedOutput()
+func Dig(arg string) ([]byte, error) {
+	args := strings.Fields(arg)
+	return exec.Command("dig", args...).CombinedOutput()
 }
 
 func writeDig(res http.ResponseWriter, args string) {
