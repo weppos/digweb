@@ -90,8 +90,7 @@ func writeDig(res http.ResponseWriter, args string) {
 	out, err := Dig(args)
 
 	if err != nil {
-		http.Error(res, "Bad Request", http.StatusBadRequest)
-		fmt.Fprintln(res, err)
+		http.Error(res, string(out), http.StatusBadRequest)
 	} else {
 		// For now, I don't care whether the output is Stdout or Stderr.
 		// In the future, we may want more control over the request and return
