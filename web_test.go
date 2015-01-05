@@ -7,6 +7,26 @@ import (
 	"testing"
 )
 
+func TestDig(t *testing.T) {
+	out, err := Dig("-v")
+
+	if err != nil {
+		t.Fatalf("Dig failed: %v", err)
+	}
+
+	if match := "DiG"; !strings.Contains(string(out), match) {
+		t.Fatalf("actionDig body should match %v, got %s", match, out)
+	}
+}
+
+func TestDig_usage(t *testing.T) {
+	out, _ := Dig("-h")
+
+	if match := "Usage:"; !strings.Contains(string(out), match) {
+		t.Fatalf("actionDig body should match %v, got %s", match, out)
+	}
+}
+
 func TestRootHandlerRoutesGetRequest(t *testing.T) {
 	request, _ := http.NewRequest("GET", "/", nil)
 	response := httptest.NewRecorder()

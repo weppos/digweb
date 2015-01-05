@@ -57,7 +57,16 @@ func actionRoot(res http.ResponseWriter, req *http.Request) {
 // actionDig executes the dig query and responds with the result.
 func actionDig(res http.ResponseWriter, req *http.Request) {
 	args, _ := ioutil.ReadAll(req.Body)
-	out, err := exec.Command("dig", string(args)).CombinedOutput()
+	writeDig(res, string(args))
+}
+
+// Dig [@global-server] [domain] [q-type] [q-class] {q-opt}
+func Dig(args string) ([]byte, error) {
+	return exec.Command("dig", args).CombinedOutput()
+}
+
+func writeDig(res http.ResponseWriter, args string) {
+	out, err := Dig(args)
 
 	if err != nil {
 		http.Error(res, "Bad Request", http.StatusBadRequest)
