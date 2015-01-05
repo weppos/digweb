@@ -19,7 +19,7 @@ func TestRootHandlerRoutesGetRequest(t *testing.T) {
 }
 
 func TestRootHandlerRoutesPostRequest(t *testing.T) {
-	request, _ := http.NewRequest("POST", "/", nil)
+	request, _ := http.NewRequest("POST", "/", strings.NewReader("-v"))
 	response := httptest.NewRecorder()
 
 	RootHandler(response, request)
@@ -52,12 +52,12 @@ func TestRootHandler_actionRoot_success(t *testing.T) {
 }
 
 func TestRootHandler_actionDig_success(t *testing.T) {
-	request, _ := http.NewRequest("POST", "/", nil)
+	request, _ := http.NewRequest("POST", "/", strings.NewReader("-v"))
 	response := httptest.NewRecorder()
 
 	RootHandler(response, request)
 
-	if match := "Digging"; !strings.Contains(response.Body.String(), match) {
+	if match := "DiG"; !strings.Contains(response.Body.String(), match) {
 		t.Fatalf("actionDig body should match %v, got %v", match, response.Body)
 	}
 }

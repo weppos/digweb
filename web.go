@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"os/exec"
+	"io/ioutil"
 )
 
 var (
@@ -54,5 +56,17 @@ func actionRoot(res http.ResponseWriter, req *http.Request) {
 
 // actionDig executes the dig query and responds with the result.
 func actionDig(res http.ResponseWriter, req *http.Request) {
-	fmt.Fprintln(res, "Digging...")
+	args, _ := ioutil.ReadAll(req.Body)
+	out, err := exec.Command("dig", string(args)).CombinedOutput()
+
+	if err != nil {
+		http.Error(res, "Bad Request", http.StatusBadRequest)
+		fmt.Fprintln(res, err)
+	} else {
+		// For now, I don't care whether the output is Stdout or Stderr.
+		// In the future, we may want more control over the request and return
+		// - 200 if Stdout
+		// - 520 (Origin Error) if Stderr
+		fmt.Fprintln(res, string(out))
+	}
 }
