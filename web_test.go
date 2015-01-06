@@ -14,7 +14,7 @@ func TestDig(t *testing.T) {
 		t.Fatalf("Dig failed: %v", err)
 	}
 
-	if match := "DiG"; !strings.Contains(string(out), match) {
+	if match := "DiG"; !strings.Contains(out, match) {
 		t.Fatalf("actionDig body should match %v, got %s", match, out)
 	}
 }
@@ -22,7 +22,7 @@ func TestDig(t *testing.T) {
 func TestDig_usage(t *testing.T) {
 	out, _ := Dig("-h")
 
-	if match := "Usage:"; !strings.Contains(string(out), match) {
+	if match := "Usage:"; !strings.Contains(out, match) {
 		t.Fatalf("actionDig body should match %v, got %s", match, out)
 	}
 }

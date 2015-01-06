@@ -2,10 +2,10 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"os"
 	"os/exec"
-	"io/ioutil"
 	"strings"
 )
 
@@ -83,21 +83,21 @@ func actionSlack(res http.ResponseWriter, req *http.Request) {
 }
 
 // Dig [@global-server] [domain] [q-type] [q-class] {q-opt}
-func Dig(arg string) ([]byte, error) {
+func Dig(arg string) (string, error) {
 	args := strings.Fields(arg)
-	return exec.Command("dig", args...).CombinedOutput()
+	out, err := exec.Command("dig", args...).CombinedOutput()
+	return string(out), err
 }
 
 func writeDig(res http.ResponseWriter, args string) {
 	out, err := Dig(args)
 
-	if err != nil {
-		http.Error(res, string(out), http.StatusBadRequest)
+	if err != nil && out == "" {
+		http.Error(res, err.Error(), http.StatusBadRequest)
+	} else if err != nil {
+		http.Error(res, err.Error(), 520)
+		fmt.Fprintln(res, out)
 	} else {
-		// For now, I don't care whether the output is Stdout or Stderr.
-		// In the future, we may want more control over the request and return
-		// - 200 if Stdout
-		// - 520 (Origin Error) if Stderr
-		fmt.Fprintln(res, string(out))
+		fmt.Fprintln(res, out)
 	}
 }
